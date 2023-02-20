@@ -3,6 +3,49 @@
 #include "glm/glm.hpp"
 
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+struct ShaderProgramSource
+{
+	std::string VertexSource;
+	std::string FragmentSource;
+};
+
+static ShaderProgramSource ParseShader(const std::string& filePath)
+{
+	std::ifstream stream(filePath);
+
+	enum class Shadertype
+	{
+		NONE = -1, VERTEX = 0, FRAGEMENT = 1
+	};
+
+	std::string line;
+	std::stringstream ss[2];
+	Shadertype type = Shadertype::NONE;  
+	while (getline(stream, line))
+	{
+		if (line.find("#shader") != std::string::npos)
+		{
+			if (line.find("vertex") != std::string::npos)
+			{
+				type = Shadertype::VERTEX;
+			}
+			else if (line.find("fragment") != std::string::npos)
+			{
+				type = Shadertype::FRAGEMENT;
+			}
+		}
+		else
+		{
+			ss[int(type)] << line << '\n';
+		}
+	}
+
+	return { ss[0].str(), ss[1].str()};
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string& source)
 {
@@ -89,27 +132,13 @@ int main(void)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (const void*)0);
 
-	std::string vertexShader = 
-		"#version 330 core\n"
-		"\n"
-		"layout(location = 0) in vec4 position;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-		"	gl_Position = position; \n"
-		"}\n";
+	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
+	std::cout << "source.VertexSource "<< std::endl;
+	std::cout << source.VertexSource << std::endl;
+	std::cout << "source.FragmentSource" << std::endl;
+	std::cout << source.FragmentSource << std::endl;
 
-	std::string fragmentShader =
-		"#version 330 core\n"
-		"\n"
-		"layout(location = 0) out vec4 color;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-		"	color = vec4(1.0, 0.0, 0.0, 1.0); \n"
-		"}\n";
-
-	unsigned int shader = CreateShader(vertexShader, fragmentShader);
+	const unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	glUseProgram(shader);
 
 	/* Loop until user close the windows */
@@ -126,6 +155,8 @@ int main(void)
 		/* poll for and process events */
 		glfwPollEvents();
 	}
+
+	glDeleteProgram(shader);
 
 	glfwTerminate();
 	return 0;
