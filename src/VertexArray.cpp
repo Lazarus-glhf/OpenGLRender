@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "VertexBufferLayout.h"
 #include "Renderer.h"
 
 VertexArray::VertexArray()
