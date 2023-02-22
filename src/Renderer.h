@@ -22,4 +22,4 @@ public:
 	void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader) const;
 
 	void Clear() const;
-};
+}; 
