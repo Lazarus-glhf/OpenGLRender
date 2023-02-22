@@ -1,6 +1,5 @@
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <fstream>
@@ -15,6 +14,9 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -28,7 +30,7 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
+	window = glfwCreateWindow(960, 540, "Hello World", nullptr, nullptr);
 	if (!window)
 	{
 		glfwTerminate();
@@ -48,10 +50,10 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
 	float positions[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, // 0
-		 0.5f, -0.5f, 1.0f, 0.0f, // 1
-		 0.5f,  0.5f, 1.0f, 1.0f, // 2
-		-0.5f,  0.5f, 0.0f, 1.0f  // 3
+		-10.5f, -10.5f, 0.0f, 0.0f, // 0
+		 10.5f, -10.5f, 1.0f, 0.0f, // 1
+		 10.5f,  10.5f, 1.0f, 1.0f, // 2
+		-10.5f,  10.5f, 0.0f, 1.0f  // 3
 	};
 
 	unsigned int indicies[] = {
@@ -69,9 +71,27 @@ int main(void)
 
 	IndexBuffer ib(indicies, 6);
 
+	glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+	glm::vec4 vp(-0.5f, -0.5f, 0.0f, 1.0f);
+	glm::vec4 res = proj * vp;
+	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
+	vp = glm::vec4(0.5f, -0.5f, 0.0f, 1.0f);
+	res = vp * proj;
+	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
+	vp = glm::vec4(0.5f, 0.5f, 0.0f, 1.0f);
+	res = vp * proj;
+	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
+	vp = glm::vec4(-0.5f, 0.5f, 0.0f, 1.0f);
+	res = vp * proj;
+	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
+	// glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+
+	// glm::mat4 mvp = proj * view;
+
 	// Shader
 	Shader shader("res/shaders/Basic.shader");
 	shader.Bind();
+	shader.SetUniformMat4f("u_MVP", proj);
 
 	Texture texture("res/texture/Avatar.jpg");
 	texture.Bind();
