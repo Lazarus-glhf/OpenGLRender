@@ -50,10 +50,10 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
 	float positions[] = {
-		-10.5f, -10.5f, 0.0f, 0.0f, // 0
-		 10.5f, -10.5f, 1.0f, 0.0f, // 1
-		 10.5f,  10.5f, 1.0f, 1.0f, // 2
-		-10.5f,  10.5f, 0.0f, 1.0f  // 3
+		100.0f, 100.0f, 0.0f, 0.0f, // 0
+		200.0f, 100.0f, 1.0f, 0.0f, // 1
+		200.0f, 200.0f, 1.0f, 1.0f, // 2
+		100.0f, 200.0f, 0.0f, 1.0f  // 3
 	};
 
 	unsigned int indicies[] = {
@@ -72,26 +72,15 @@ int main(void)
 	IndexBuffer ib(indicies, 6);
 
 	glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-	glm::vec4 vp(-0.5f, -0.5f, 0.0f, 1.0f);
-	glm::vec4 res = proj * vp;
-	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
-	vp = glm::vec4(0.5f, -0.5f, 0.0f, 1.0f);
-	res = vp * proj;
-	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
-	vp = glm::vec4(0.5f, 0.5f, 0.0f, 1.0f);
-	res = vp * proj;
-	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
-	vp = glm::vec4(-0.5f, 0.5f, 0.0f, 1.0f);
-	res = vp * proj;
-	std::cout << res.x << " " << res.y << " " << res.z << std::endl;
-	// glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
 
-	// glm::mat4 mvp = proj * view;
+	glm::mat4 mvp = proj * view * model;
 
 	// Shader
 	Shader shader("res/shaders/Basic.shader");
 	shader.Bind();
-	shader.SetUniformMat4f("u_MVP", proj);
+	shader.SetUniformMat4f("u_MVP", mvp);
 
 	Texture texture("res/texture/Avatar.jpg");
 	texture.Bind();
