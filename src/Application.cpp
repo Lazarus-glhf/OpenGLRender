@@ -57,12 +57,15 @@ int main(void)
 	// ImGUI
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	// ImGui_ImplOpenGL3_Init("#version 130");
 	ImGui::StyleColorsDark();
-	ImGuiIO& io = ImGui::GetIO();
-	(void)io;
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
+
+	test::Test* currentTest = nullptr;
+	test::TestMenu* testMenu = new test::TestMenu(currentTest);
+	currentTest = testMenu;
+
+	testMenu->Registertest<test::TestClearColor>("clear color");
 
 	test::TestClearColor test;
 
@@ -75,9 +78,25 @@ int main(void)
 		test.OnUpdate(0.0f);
 		test.OnRender(); 
 
+		// Init ImGui
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
+
+		if (currentTest)
+		{
+			currentTest->OnUpdate(0.0f);
+			currentTest->OnRender();
+
+			ImGui::Begin("Test");
+			if (currentTest != testMenu && ImGui::Button("<-"))
+			{
+				delete currentTest;
+				currentTest = testMenu;
+			}
+			currentTest->OnImGuiRender();
+			ImGui::End();
+		}
 
 		test.OnImGuiRender();
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
