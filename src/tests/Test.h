@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <type_traits>
 
 namespace test
 {
@@ -25,12 +26,12 @@ namespace test
 
 		void OnImGuiRender() override;
 
-		template<typename T>
+		template<typename T, typename = std::enable_if_t<std::is_base_of_v<Test, T>, void>>
 		void Registertest(const std::string& name)
 		{
 			std::cout << "Registering test " << name << std::endl;
 
-			m_Tests.push_back(std::make_pair(name, []() { return dynamic_cast<Test*> (new T()); }));
+			m_Tests.push_back(std::make_pair(name, [] { return (Test*) new T(); }));
 		}
 
 	private:
