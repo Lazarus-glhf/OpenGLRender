@@ -67,16 +67,11 @@ int main(void)
 
 	testMenu->Registertest<test::TestClearColor>("clear color");
 
-	test::TestClearColor test;
-
 	///////////////////////////////////////
 	/* Loop until user close the windows */
 	while(!glfwWindowShouldClose(window))
 	{
 		renderer.Clear();
-
-		test.OnUpdate(0.0f);
-		test.OnRender(); 
 
 		// Init ImGui
 		ImGui_ImplGlfw_NewFrame();
@@ -98,7 +93,6 @@ int main(void)
 			ImGui::End();
 		}
 
-		test.OnImGuiRender();
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::Render();
