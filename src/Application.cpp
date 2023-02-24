@@ -73,6 +73,8 @@ int main(void)
 	{
 		renderer.Clear();
 
+		GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
 		// Init ImGui
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
@@ -93,18 +95,21 @@ int main(void)
 			ImGui::End();
 		}
 
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 
-		glfwPollEvents(); 
+		glfwPollEvents();
+
+		delete currentTest;
+		if (currentTest != testMenu)
+		{
+			delete testMenu;
+		}
 	}
 	/////////////////////////////////////
 
-	// ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
