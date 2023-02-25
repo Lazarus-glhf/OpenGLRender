@@ -23,7 +23,6 @@ namespace test
 	{
 	public:
 		TestMenu(Test*& CurrentTestPointer);
-		~TestMenu();
 
 		void OnImGuiRender() override;
 

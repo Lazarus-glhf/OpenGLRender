@@ -22,6 +22,7 @@
 #include "vender/imgui/imgui_impl_glfw.h"
 
 #include "tests/TestClearColor.h"
+#include "tests/TestTexture2D.h"
 
 int main(void)
 {
@@ -66,6 +67,7 @@ int main(void)
 	currentTest = testMenu;
 
 	testMenu->Registertest<test::TestClearColor>("clear color");
+	testMenu->Registertest<test::TestTexture2D>("2DTexture");
 
 	///////////////////////////////////////
 	/* Loop until user close the windows */
@@ -101,14 +103,14 @@ int main(void)
 		glfwSwapBuffers(window);
 
 		glfwPollEvents();
-
-		delete currentTest;
-		if (currentTest != testMenu)
-		{
-			delete testMenu;
-		}
 	}
 	/////////////////////////////////////
+
+	delete currentTest;
+	if (currentTest != testMenu)
+	{
+		delete testMenu;
+	}
 
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
